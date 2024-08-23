@@ -17,7 +17,6 @@ package generator
 import (
 	"fmt"
 	"log"
-	"os"
 	"sort"
 
 	"github.com/go-openapi/analysis"
@@ -106,10 +105,10 @@ func (a *generator) makeCodegen() (GenApp, error) {
 	count := 0
 	for mn, m := range a.Models {
 		count++
-		if count == 1 {
-			log.Println("model mn:")
-			os.Exit(1)
-		}
+		// if count == 1 {
+		// 	log.Println("model mn:")
+		// 	os.Exit(1)
+		// }
 		model, err := makeGenDefinition(
 			mn,
 			a.ModelsPackage,

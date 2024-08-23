@@ -104,7 +104,10 @@ func knownDefKclType(def string, schema spec.Schema, clear func(string) string) 
 	if !ok {
 		return clearedTpe, "", "", ""
 	}
+	// log.Println("impIface:", impIface)
 	imp := impIface.(map[string]interface{})
+
+	// log.Println("ready conversion package:", imp["package"])
 	pkg := imp["package"].(string)
 	alias := ""
 	newPkg := pkg
