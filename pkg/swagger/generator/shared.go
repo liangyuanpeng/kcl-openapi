@@ -335,6 +335,32 @@ func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
 	models := make(map[string]spec.Schema)
 	defs := specDoc.Spec().Definitions
 	for k, v := range defs {
+		if xk, ok := v.VendorExtensible.Extensions["x-kubernetes-group-version-kind"]; ok {
+			log.Println("xk:", xk)
+			slice1, ok := xk.([]interface{})
+			if !ok {
+				return nil, fmt.Errorf("expected slice of GroupVersionKinds, got: %+v", slice1)
+			}
+			if len(slice1) < 1 {
+				continue
+			}
+			// for _, x := range slice1 {
+			// 	gvk, ok := x.(map[string]interface{})
+			// 	if !ok {
+			// 		return nil, fmt.Errorf(`expected {"group": <group>, "kind": <kind>, "version": <version>}, got: %#v`, x)
+			// 	}
+			// 	k := fmt.Sprintf("%s/%s.%s", gvk["group"], gvk["version"], gvk["kind"])
+			// 	log.Println("got k:",k)
+			// }
+
+			gvk, ok := slice1[0].(map[string]interface{})
+			if !ok {
+				return nil, fmt.Errorf(`expected {"group": <group>, "kind": <kind>, "version": <version>}, got: %#v`, slice1[0])
+			}
+			k := fmt.Sprintf("%s/%s.%s", gvk["group"], gvk["version"], gvk["kind"])
+			log.Println("got k:", k)
+
+		}
 		models[k] = v
 	}
 	return models, nil
