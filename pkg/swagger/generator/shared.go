@@ -16,6 +16,7 @@ package generator
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -23,6 +24,7 @@ import (
 	"path"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"sort"
 	"strings"
 	"text/template"
@@ -340,6 +342,15 @@ type KCLTypeImport struct {
 	Alias   string
 }
 
+func camelCaseToSnakeCase(str string) string {
+	var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
+	var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
+
+	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
+	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
+	return strings.ToLower(snake)
+}
+
 func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
 	models := make(map[string]spec.Schema)
 	defs := specDoc.Spec().Definitions
@@ -347,11 +358,16 @@ func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
 	for k, v := range defs {
 		strs := strings.Split(k, ".")
 		kind := strs[len(strs)-1]
-		log.Println("kind:", kind)
+		// log.Println("kind:", kind)
+
+		groupVersion := strings.ReplaceAll(k, "."+kind, "")
+		fname := camelCaseToSnakeCase(kind)
+		packageStr := groupVersion + "." + fname
+		alias := fname
 
 		kclTypeImport := make(map[string]interface{})
-		kclTypeImport["package"] = string(k)
-		kclTypeImport["alias"] = k
+		kclTypeImport["package"] = packageStr
+		kclTypeImport["alias"] = alias
 
 		kclType := make(map[string]interface{})
 		kclType["type"] = kind
@@ -392,6 +408,21 @@ func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
 		// 	log.Println("got k:", k)
 		// }
 		models[k] = v
+
+		if kind == "ValidatingAdmissionPolicy" {
+			data, err := json.MarshalIndent(v, "", "  ")
+			if err != nil {
+				return nil, err
+			}
+			fmt.Println(string(data))
+			// if 2 > 1 {
+			// 	os.Exit(1)
+			// }
+		}
+		// if 2 > 1 {
+		// 	os.Exit(1)
+		// }
+
 	}
 	return models, nil
 }
