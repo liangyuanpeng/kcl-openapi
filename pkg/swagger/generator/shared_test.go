@@ -18,6 +18,14 @@ func TestCamelCaseToSnakeCase(t *testing.T) {
 			value:  "ValidatingAdmissionPolicyList",
 			expect: "validating_admission_policy_list",
 		},
+		{
+			value:  "k8s.api.core.v1.PersistentVolumeClaim",
+			expect: "k8s.api.core.v1.persistent_volume_claim",
+		},
+		{
+			value:  "PersistentVolumeClaim",
+			expect: "persistent_volume_claim",
+		},
 	}
 	for _, testcase := range cases {
 		t.Run(testcase.value, func(t *testing.T) {
