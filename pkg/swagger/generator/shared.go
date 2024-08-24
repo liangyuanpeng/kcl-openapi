@@ -343,12 +343,27 @@ type KCLTypeImport struct {
 }
 
 func camelCaseToSnakeCase(str string) string {
-	var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
-	var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
+	var matchAllCap = regexp.MustCompile("(^[A-Z][a-z]+|[A-Z][a-z]+)")
 
-	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
-	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
-	return strings.ToLower(snake)
+	snake := matchAllCap.ReplaceAllStringFunc(str, func(s string) string {
+		snake := ""
+		capNext := false
+		for _, c := range s {
+			if c >= 'A' && c <= 'Z' {
+				if !capNext {
+					snake += "_"
+				}
+				snake += strings.ToLower(string(c))
+				capNext = true
+			} else {
+				snake += string(c)
+				capNext = false
+			}
+		}
+		return snake
+	})
+
+	return snake
 }
 
 func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
