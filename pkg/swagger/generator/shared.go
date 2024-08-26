@@ -371,13 +371,17 @@ func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
 	defs := specDoc.Spec().Definitions
 
 	for k, v := range defs {
+
 		strs := strings.Split(k, ".")
 		kind := strs[len(strs)-1]
 		// log.Println("kind:", kind)
 
 		groupVersion := strings.ReplaceAll(k, "."+kind, "")
 		fname := camelCaseToSnakeCase(kind)
+		fname = strings.Replace(fname, "_", "", 1)
+		// log.Println("fname:", fname)
 		packageStr := groupVersion + "." + fname
+		packageStr = strings.ReplaceAll(packageStr, "io.k8s.", "k8s.")
 		alias := fname
 
 		kclTypeImport := make(map[string]interface{})
@@ -422,9 +426,12 @@ func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
 		// 	k := fmt.Sprintf("%s/%s.%s", gvk["group"], gvk["version"], gvk["kind"])
 		// 	log.Println("got k:", k)
 		// }
+
+		k = strings.ReplaceAll(k, "io.k8s.", "k8s.")
+
 		models[k] = v
 
-		if kind == "ValidatingAdmissionPolicy" {
+		if kind == "MutatingWebhookConfigurationList" {
 			data, err := json.MarshalIndent(v, "", "  ")
 			if err != nil {
 				return nil, err

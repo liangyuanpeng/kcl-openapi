@@ -2,8 +2,13 @@ package generator
 
 import (
 	"log"
+	"strings"
 	"testing"
 )
+
+func TestH(t *testing.T) {
+	log.Println(strings.Replace("_a_b", "_", "", 1))
+}
 
 func TestCamelCaseToSnakeCase(t *testing.T) {
 	cases := []struct {
