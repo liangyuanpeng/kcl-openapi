@@ -80,6 +80,8 @@ func makeGenDefinitionHierarchy(name, pkg, container string, schema spec.Schema,
 		}
 	}
 
+	log.Println("==================name:", name)
+
 	dse, ok := di.Discriminated["#/definitions/"+name]
 	if ok {
 		pg.GenSchema.DiscriminatorField = dse.FieldName

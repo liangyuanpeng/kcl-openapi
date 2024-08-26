@@ -401,6 +401,29 @@ func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
 			v.VendorExtensible.Extensions["x-kcl-type"] = kclType
 		}
 
+		for k, v1 := range v.Properties {
+			// v1.Ref
+
+			log.Println("properties:", k, v.Ref.GetURL())
+			if v.Ref.GetURL() != nil {
+				newurl := strings.ReplaceAll(v.Ref.GetURL().String(), "/io.k8s", "/k8s")
+				v.Ref = spec.MustCreateRef(newurl)
+			}
+			// newurl := strings.ReplaceAll(v.Ref.GetURL().Path, "/io.k8s", "/k8s")
+			if k == "items" {
+				if v1.Required == nil {
+
+				}
+				for k2, v2 := range v.Properties {
+					log.Println("properties,k2v2:", k2, v2.Ref.GetURL())
+					if v2.Ref.GetURL() != nil {
+						newurl := strings.ReplaceAll(v2.Ref.GetURL().String(), "/io.k8s", "/k8s")
+						v2.Ref = spec.MustCreateRef(newurl)
+					}
+				}
+			}
+		}
+
 		// if xk, ok := v.VendorExtensible.Extensions["x-kubernetes-group-version-kind"]; ok {
 		// 	log.Println("xk:", xk)
 		// 	slice1, ok := xk.([]interface{})
@@ -437,6 +460,7 @@ func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
 				return nil, err
 			}
 			fmt.Println(string(data))
+
 			// if 2 > 1 {
 			// 	os.Exit(1)
 			// }

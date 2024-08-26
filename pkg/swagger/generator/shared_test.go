@@ -4,7 +4,17 @@ import (
 	"log"
 	"strings"
 	"testing"
+
+	"github.com/go-openapi/jsonreference"
 )
+
+func TestRef(t *testing.T) {
+	ref, err := jsonreference.New("#/definitions/io.k8s.api.Hello")
+	if err != nil {
+		panic(err)
+	}
+	log.Println("ref:", ref.GetURL().String())
+}
 
 func TestH(t *testing.T) {
 	log.Println(strings.Replace("_a_b", "_", "", 1))
