@@ -80,7 +80,7 @@ func makeGenDefinitionHierarchy(name, pkg, container string, schema spec.Schema,
 		}
 	}
 
-	log.Println("==================name:", name)
+	// log.Println("==================name:", name)
 
 	dse, ok := di.Discriminated["#/definitions/"+name]
 	if ok {

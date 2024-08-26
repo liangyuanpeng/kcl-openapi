@@ -109,6 +109,7 @@ func (a *generator) makeCodegen() (GenApp, error) {
 		// 	log.Println("model mn:")
 		// 	os.Exit(1)
 		// }
+		log.Println("======================mn,package",mn,a.ModelsPackage,a.GenOpts)
 		model, err := makeGenDefinition(
 			mn,
 			a.ModelsPackage,

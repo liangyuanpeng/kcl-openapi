@@ -404,7 +404,7 @@ func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
 		for k, v1 := range v.Properties {
 			// v1.Ref
 
-			log.Println("properties:", k, v.Ref.GetURL())
+			// log.Println("properties:", k, v.Ref.GetURL())
 			if v.Ref.GetURL() != nil {
 				newurl := strings.ReplaceAll(v.Ref.GetURL().String(), "/io.k8s", "/k8s")
 				v.Ref = spec.MustCreateRef(newurl)
@@ -415,7 +415,10 @@ func gatherModels(specDoc *loads.Document) (map[string]spec.Schema, error) {
 
 				}
 				for k2, v2 := range v.Properties {
-					log.Println("properties,k2v2:", k2, v2.Ref.GetURL())
+					if k2 == "" {
+
+					}
+					// log.Println("properties,k2v2:", k2, v2.Ref.GetURL())
 					if v2.Ref.GetURL() != nil {
 						newurl := strings.ReplaceAll(v2.Ref.GetURL().String(), "/io.k8s", "/k8s")
 						v2.Ref = spec.MustCreateRef(newurl)
