@@ -253,6 +253,9 @@ func getImportAsName(imp map[string]importStmt, pkg string, module string) strin
 		conflict := false
 		// when conflict with other import as name, the `import as` name will be "{parentPkgName}strings.Title({PkgAlias})"
 		asName = parts[i] + strings.ToTitle(asName)
+		// if 2 > 1 {
+		// 	return asName
+		// }
 		for _, v := range imp {
 			if v.AsName == asName {
 				conflict = true
@@ -274,6 +277,7 @@ func getImportAsName(imp map[string]importStmt, pkg string, module string) strin
 
 // collectImports collect import paths from the sch to the toPkg, the result will be collected to the importStmt map.
 func collectImports(sch *GenSchema, toPkg string, imp map[string]importStmt) {
+	//lan 收集imports?
 	if sch.Items != nil && sch.IsArray {
 		collectImports(sch.Items, toPkg, imp)
 		sch.KclType = "[" + sch.Items.KclType + "]"
@@ -320,11 +324,12 @@ func collectImports(sch *GenSchema, toPkg string, imp map[string]importStmt) {
 	if _, ok := imp[sch.Pkg]; !ok {
 		// the package path is not imported, need to import the pkg
 		asName := getImportAsName(imp, innerPkg, sch.Module)
+		log.Println("asName:", asName)
 		imp[sch.Pkg] = importStmt{
 			ImportPath: innerPkg, // remove the root package name
 			AsName:     asName,
 			// if the package alias is conflict with other imports, use the `import as` syntax to resolve conflict.
-			MustAsName: asName != sch.Pkg[strings.LastIndex(sch.Pkg, ".")+1:],
+			MustAsName: true,
 		}
 	}
 	// update the KclType with the import as name prefix

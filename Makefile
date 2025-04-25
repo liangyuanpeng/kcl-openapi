@@ -2,6 +2,9 @@ GO_FILES:=$$(find ./ -type f -name '*.go' -not -path ".//vendor/*")
 COVER_FILE    ?= coverage.out
 SOURCE_PATHS  ?= ./pkg/...
 
+run: 
+	go run main.go  generate model -f processed-swagger.json --skip-validation
+
 test:
 	go test ./...
 

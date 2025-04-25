@@ -121,7 +121,7 @@ func knownDefKclType(def string, schema spec.Schema, clear func(string) string) 
 	} else {
 		alias = newPkg
 	}
-	log.Printf("==================pkg:%s,newPkg:%s,alias:%s \n", pkg, newPkg, alias)
+	// log.Printf("==================pkg:%s,newPkg:%s,alias:%s \n", pkg, newPkg, alias)
 	// hack end
 	var module string
 	al, ok := imp["alias"]
