@@ -106,6 +106,7 @@ func knownDefKclType(def string, schema spec.Schema, clear func(string) string) 
 	}
 	imp := impIface.(map[string]interface{})
 	pkg := imp["package"].(string)
+
 	alias := ""
 	newPkg := pkg
 	// hack start
@@ -113,12 +114,14 @@ func knownDefKclType(def string, schema spec.Schema, clear func(string) string) 
 	if goodIdx != -1 {
 		newPkg = pkg[:goodIdx]
 	}
+
 	goodIdx = strings.LastIndex(newPkg, ".")
 	if goodIdx != -1 {
-		alias = newPkg[goodIdx+1:]
+		alias = strings.ReplaceAll(newPkg[goodIdx+2:], ".", "")
 	} else {
 		alias = newPkg
 	}
+	log.Printf("==================pkg:%s,newPkg:%s,alias:%s \n", pkg, newPkg, alias)
 	// hack end
 	var module string
 	al, ok := imp["alias"]
