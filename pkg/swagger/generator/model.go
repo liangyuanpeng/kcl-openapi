@@ -15,6 +15,7 @@
 package generator
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"path"
@@ -192,6 +193,14 @@ func (sg *schemaGenContext) collectSortedImports() []importStmt {
 	// 2. the import paths are sorted in lexicographical order
 	sortedImports := sortImports(builtInImps)
 	sortedImports = append(sortedImports, sortImports(pkgImps)...)
+	b, err := json.Marshal(sortedImports)
+	if err != nil {
+		panic(err)
+	}
+	log.Println("imports:", string(b))
+	// if len(sortedImports) > 0 {
+	// 	os.Exit(-1)
+	// }
 	return sortedImports
 }
 
@@ -323,11 +332,12 @@ func collectImports(sch *GenSchema, toPkg string, imp map[string]importStmt) {
 	}
 	if _, ok := imp[sch.Pkg]; !ok {
 		// the package path is not imported, need to import the pkg
-		asName := getImportAsName(imp, innerPkg, sch.Module)
-		log.Println("asName:", asName)
+		// asName := getImportAsName(imp, innerPkg, sch.Module)
+		// log.Printf("asName:%s,innerPkg:%s \n", asName, innerPkg)
 		imp[sch.Pkg] = importStmt{
 			ImportPath: innerPkg, // remove the root package name
-			AsName:     asName,
+			AsName:     "v1hello",
+			// MustAsName: asName != sch.Pkg[strings.LastIndex(sch.Pkg, ".")+1:],
 			// if the package alias is conflict with other imports, use the `import as` syntax to resolve conflict.
 			MustAsName: true,
 		}

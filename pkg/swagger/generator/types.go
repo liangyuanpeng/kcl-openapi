@@ -117,7 +117,8 @@ func knownDefKclType(def string, schema spec.Schema, clear func(string) string) 
 
 	goodIdx = strings.LastIndex(newPkg, ".")
 	if goodIdx != -1 {
-		alias = strings.ReplaceAll(newPkg[goodIdx+2:], ".", "")
+		alias = newPkg[goodIdx+1:]
+		// alias = strings.ReplaceAll(newPkg[goodIdx+2:], ".", "")
 	} else {
 		alias = newPkg
 	}
@@ -130,7 +131,14 @@ func knownDefKclType(def string, schema spec.Schema, clear func(string) string) 
 	} else {
 		module = path.Base(pkg)
 	}
-	debugLog("known def type %s no clear: %q: pkg=%s, alias=%s, module=%s", xKclType, t, newPkg, alias, module)
+	if strings.Contains(t, "daemonSet") {
+		log.Println("==========================================")
+	}
+	// log.Printf("known def type %s no clear: %q: pkg=%s, alias=%s, module=%s \n", xKclType, t, newPkg, alias, module)
+	// debugLog("known def type %s no clear: %q: pkg=%s, alias=%s, module=%s", xKclType, t, newPkg, alias, module)
+	// if strings.Contains(t, "DaemonSetSpec") {
+	// 	os.Exit(-1)
+	// }
 	return clearedTpe, newPkg, alias, module
 }
 
