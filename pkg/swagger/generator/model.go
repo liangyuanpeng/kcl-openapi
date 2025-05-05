@@ -332,11 +332,14 @@ func collectImports(sch *GenSchema, toPkg string, imp map[string]importStmt) {
 	}
 	if _, ok := imp[sch.Pkg]; !ok {
 		// the package path is not imported, need to import the pkg
-		// asName := getImportAsName(imp, innerPkg, sch.Module)
-		// log.Printf("asName:%s,innerPkg:%s \n", asName, innerPkg)
+		asName := getImportAsName(imp, innerPkg, sch.Module)
+		// apimachinery.pkg.apis.meta.v1
+		strs := strings.Split(innerPkg, ".")
+		importpkg := strs[len(strs)-2] + strs[len(strs)-1]
+		log.Printf("asName:%s,innerPkg:%s,lastIndex:%s \n", asName, innerPkg, importpkg)
 		imp[sch.Pkg] = importStmt{
 			ImportPath: innerPkg, // remove the root package name
-			AsName:     "v1hello",
+			AsName:     importpkg,
 			// MustAsName: asName != sch.Pkg[strings.LastIndex(sch.Pkg, ".")+1:],
 			// if the package alias is conflict with other imports, use the `import as` syntax to resolve conflict.
 			MustAsName: true,
